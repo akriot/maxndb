@@ -29,15 +29,26 @@ These instructions will help you set up and run MaxNDB on your local machine for
    git clone https://github.com/yourusername/maxndb.git
    cd maxndb
 
-### Install Rust Dependencies:
+## Install Rust Dependencies
 
 Ensure you have Cargo, Rust's package manager, installed.
+
 ```bash
 cargo build
-Python Setup (Optional):
-```
 
-***Install necessary Python packages if you plan to use the Python embedding generator:***
+
+### 2. **Python Setup (Optional)**
+
+```markdown
+## Python Setup (Optional)
+
+Install necessary Python packages if you plan to use the Python embedding generator:
+
+```bash
+pip install sentence-transformers
+
+### 2. **Install necessary Python packages if you plan to use the Python embedding generator:**
+
 ```bash
 Copy code
 pip install sentence-transformers

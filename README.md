@@ -33,12 +33,12 @@ These instructions will help you set up and run MaxNDB on your local machine for
 
 Ensure you have Cargo, Rust's package manager, installed.
 ```bash
-Copy code
 cargo build
 Python Setup (Optional):
+```
 
-Install necessary Python packages if you plan to use the Python embedding generator:
-bash
+***Install necessary Python packages if you plan to use the Python embedding generator:***
+```bash
 Copy code
 pip install sentence-transformers
 Running the Program

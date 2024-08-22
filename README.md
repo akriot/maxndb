@@ -37,9 +37,8 @@ Ensure you have Cargo, Rust's package manager, installed.
 cargo build
 
 
-### 2. **Python Setup (Optional)**
+## 2. **Python Setup (Optional)**
 
-```markdown
 ## Python Setup (Optional)
 
 Install necessary Python packages if you plan to use the Python embedding generator:

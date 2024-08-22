@@ -28,10 +28,11 @@ These instructions will help you set up and run MaxNDB on your local machine for
    ```bash
    git clone https://github.com/yourusername/maxndb.git
    cd maxndb
-Install Rust Dependencies:
+
+### Install Rust Dependencies:
 
 Ensure you have Cargo, Rust's package manager, installed.
-bash
+```bash
 Copy code
 cargo build
 Python Setup (Optional):

@@ -1,55 +1,67 @@
-use crate::cache::LRUCache;
-use ndarray::Array1;
+use std::collections::{HashMap, VecDeque};
 use serde::{Deserialize, Serialize};
 
-pub struct Optimizer {
-    cache: LRUCache,
-    embeddings: Vec<Embedding>,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserProfile {
+    pub id: u32,
+    pub name: String,
+    pub age: u32,
+    pub interests: Option<Vec<String>>, // Change to Option<Vec<String>>
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Embedding {
-    id: String,
-    vector: Vec<f64>,
-}
+pub struct Optimizer;
 
 impl Optimizer {
     pub fn new() -> Self {
-        Optimizer {
-            cache: LRUCache::new(100),
-            embeddings: Vec::new(),
-        }
+        Optimizer
     }
 
-    pub fn load_embeddings(&mut self) {
-        // Load embeddings from a file or external source.
-        // Placeholder for loading embeddings
-        self.embeddings.push(Embedding {
-            id: "sample".to_string(),
-            vector: vec![0.1, 0.2, 0.3, 0.4, 0.5],
-        });
-    }
-
-    pub fn query(&mut self, query_vector: Vec<f64>, top_k: usize) -> Vec<(String, f64)> {
-        // Simplified cosine similarity calculation
-        let mut results: Vec<(String, f64)> = self
-            .embeddings
-            .iter()
-            .map(|embedding| {
-                let similarity = cosine_similarity(&embedding.vector, &query_vector);
-                (embedding.id.clone(), similarity)
+    pub fn query(&self, user_db: &HashMap<u32, UserProfile>, query: &[String], limit: usize, min_age: u32, max_age: u32) -> Vec<UserProfile> {
+        user_db.values()
+            .filter(|profile| {
+                profile.age >= min_age && 
+                profile.age <= max_age &&
+                profile.interests.as_ref().map_or(false, |interests| interests.iter().any(|interest| query.contains(interest))) // Handle Option
             })
-            .collect();
-
-        results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
-        results.truncate(top_k);
-        results
+            .take(limit)
+            .cloned()
+            .collect()
     }
 }
 
-fn cosine_similarity(a: &[f64], b: &[f64]) -> f64 {
-    let dot_product: f64 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
-    let norm_a: f64 = a.iter().map(|x| x * x).sum::<f64>().sqrt();
-    let norm_b: f64 = b.iter().map(|x| x * x).sum::<f64>().sqrt();
-    dot_product / (norm_a * norm_b)
+pub struct LRUCache {
+    capacity: usize,
+    map: HashMap<String, Vec<UserProfile>>,
+    order: VecDeque<String>,
+}
+
+impl LRUCache {
+    pub fn new(capacity: usize) -> Self {
+        LRUCache {
+            capacity,
+            map: HashMap::new(),
+            order: VecDeque::new(),
+        }
+    }
+
+    pub fn get(&mut self, key: &str) -> Option<&Vec<UserProfile>> {
+        if let Some(value) = self.map.get(key) {
+            self.order.retain(|x| x != key);
+            self.order.push_back(key.to_string());
+            Some(value)
+        } else {
+            None
+        }
+    }
+
+    pub fn put(&mut self, key: String, value: Vec<UserProfile>) {
+        if self.map.len() == self.capacity && !self.map.contains_key(&key) {
+            if let Some(lru) = self.order.pop_front() {
+                self.map.remove(&lru);
+            }
+        }
+        self.map.insert(key.clone(), value);
+        self.order.retain(|x| x != &key);
+        self.order.push_back(key);
+    }
 }

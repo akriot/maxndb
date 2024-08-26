@@ -55,12 +55,12 @@ These instructions will help you set up and run MaxNDB on your local machine for
 
 1. **Pull the ChromaDB Docker Image**:
    ```bash
-   docker pull chromadb/chromadb:latest
+   docker pull chromadb/chroma:latest
    ```
 
 2. **Run the ChromaDB Docker Container**:
    ```bash
-   docker run -d -p 8000:8000 --name chromadb chromadb/chromadb:latest
+   docker run -d -p 8000:8000 --name chromadb chromadb/chroma:latest
    ```
 
 3. **Verify ChromaDB is Running**:
